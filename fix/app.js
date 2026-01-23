@@ -8,13 +8,13 @@ const SIZING_CONFIG = {
         multiplier: 0.70,
         name: 'Route',
         sizeChart: [
-            { max: 49, letter: 'XXS' },
-            { max: 51, letter: 'XS' },
-            { max: 53, letter: 'S' },
-            { max: 55, letter: 'M' },
-            { max: 57, letter: 'L' },
-            { max: 59, letter: 'XL' },
-            { max: Infinity, letter: 'XXL' }
+            { max: 49, letter: 'XXS', stem: 80 },
+            { max: 51, letter: 'XS', stem: 90 },
+            { max: 53, letter: 'S', stem: 100 },
+            { max: 55, letter: 'M', stem: 100 },
+            { max: 57, letter: 'L', stem: 110 },
+            { max: 59, letter: 'XL', stem: 120 },
+            { max: Infinity, letter: 'XXL', stem: 130 }
         ],
         tips: [
             { icon: '🎯', text: 'Les cadres route sont mesurés du centre au sommet du tube de selle' },
@@ -25,13 +25,13 @@ const SIZING_CONFIG = {
         multiplier: 0.67,
         name: 'CLM / Triathlon',
         sizeChart: [
-            { max: 47, letter: 'XXS' },
-            { max: 49, letter: 'XS' },
-            { max: 51, letter: 'S' },
-            { max: 53, letter: 'M' },
-            { max: 55, letter: 'L' },
-            { max: 57, letter: 'XL' },
-            { max: Infinity, letter: 'XXL' }
+            { max: 47, letter: 'XXS', stem: 70 },
+            { max: 49, letter: 'XS', stem: 80 },
+            { max: 51, letter: 'S', stem: 90 },
+            { max: 53, letter: 'M', stem: 100 },
+            { max: 55, letter: 'L', stem: 110 },
+            { max: 57, letter: 'XL', stem: 120 },
+            { max: Infinity, letter: 'XXL', stem: 120 }
         ],
         tips: [
             { icon: '💨', text: 'Les vélos CLM sont plus petits pour une position aérodynamique' },
@@ -42,12 +42,12 @@ const SIZING_CONFIG = {
         multiplier: 0.57,
         name: 'VTT',
         sizeChart: [
-            { max: 35, letter: 'XS' },
-            { max: 40, letter: 'S' },
-            { max: 45, letter: 'M' },
-            { max: 50, letter: 'L' },
-            { max: 55, letter: 'XL' },
-            { max: Infinity, letter: 'XXL' }
+            { max: 35, letter: 'XS', stem: 40 },
+            { max: 40, letter: 'S', stem: 50 },
+            { max: 45, letter: 'M', stem: 60 },
+            { max: 50, letter: 'L', stem: 70 },
+            { max: 55, letter: 'XL', stem: 80 },
+            { max: Infinity, letter: 'XXL', stem: 90 }
         ],
         tips: [
             { icon: '🏔️', text: 'Les tailles VTT sont souvent en pouces ou en S/M/L' },
@@ -58,13 +58,13 @@ const SIZING_CONFIG = {
         multiplier: 0.685,
         name: 'Gravel',
         sizeChart: [
-            { max: 49, letter: 'XXS' },
-            { max: 51, letter: 'XS' },
-            { max: 53, letter: 'S' },
-            { max: 55, letter: 'M' },
-            { max: 57, letter: 'L' },
-            { max: 59, letter: 'XL' },
-            { max: Infinity, letter: 'XXL' }
+            { max: 49, letter: 'XXS', stem: 70 },
+            { max: 51, letter: 'XS', stem: 80 },
+            { max: 53, letter: 'S', stem: 90 },
+            { max: 55, letter: 'M', stem: 90 },
+            { max: 57, letter: 'L', stem: 100 },
+            { max: 59, letter: 'XL', stem: 110 },
+            { max: Infinity, letter: 'XXL', stem: 120 }
         ],
         tips: [
             { icon: '🌲', text: 'Les vélos gravel combinent géométrie route et VTT pour plus de polyvalence' },
@@ -79,8 +79,9 @@ const PROFICIENCY_ADJUSTMENTS = {
         offset: 1,        // Légèrement plus grand pour le confort
         rangeUp: 2,
         rangeDown: 1,
+        stemOffset: -10,  // Potence plus courte pour redresser le buste
         tips: [
-            { icon: '😊', text: 'Un cadre légèrement plus grand offre une position plus droite et confortable' },
+            { icon: '😊', text: 'Un cadre légèrement plus grand et une potence plus courte offrent une position confortable' },
             { icon: '✋', text: 'Assurez-vous de pouvoir toucher le sol avec la pointe des pieds en selle' }
         ]
     },
@@ -88,6 +89,7 @@ const PROFICIENCY_ADJUSTMENTS = {
         offset: 0,
         rangeUp: 1.5,
         rangeDown: 1.5,
+        stemOffset: 0,
         tips: [
             { icon: '⚖️', text: 'Votre taille offre un équilibre entre confort et efficacité' },
             { icon: '🔄', text: 'Pensez à essayer la taille recommandée et celle en dessous' }
@@ -97,8 +99,9 @@ const PROFICIENCY_ADJUSTMENTS = {
         offset: -1,       // Légèrement plus petit pour une position agressive
         rangeUp: 1,
         rangeDown: 2,
+        stemOffset: 10,   // Potence plus longue pour allonger la position
         tips: [
-            { icon: '🏁', text: 'Un cadre compact permet une position plus aérodynamique' },
+            { icon: '🏁', text: 'Un cadre compact avec une potence longue permet une position aérodynamique' },
             { icon: '📏', text: 'Concentrez-vous sur le stack et le reach pour un positionnement optimal' }
         ]
     }
@@ -115,6 +118,7 @@ const resultsContent = document.getElementById('resultsContent');
 const frameSizeEl = document.getElementById('frameSize');
 const sizeLetterEl = document.getElementById('sizeLetter');
 const sizeRangeEl = document.getElementById('sizeRange');
+const stemLengthEl = document.getElementById('stemLength');
 const fitTipsEl = document.getElementById('fitTips');
 
 let selectedBikeType = 'road';
@@ -187,23 +191,25 @@ function calculateSize() {
     const minSize = Math.round(adjustedSize - proficiencyConfig.rangeDown);
     const maxSize = Math.round(adjustedSize + proficiencyConfig.rangeUp);
 
-    // Déterminer la taille en lettres
-    const letterSize = getLetterSize(recommendedSize, bikeConfig.sizeChart);
+    // Déterminer la taille en lettres et la potence
+    const sizeData = getSizeData(recommendedSize, bikeConfig.sizeChart);
+    const stemLength = sizeData.stem + proficiencyConfig.stemOffset;
 
     // Mettre à jour l'interface
-    showResults(recommendedSize, letterSize, minSize, maxSize, bikeConfig, proficiencyConfig);
+    showResults(recommendedSize, sizeData.letter, minSize, maxSize, stemLength, bikeConfig, proficiencyConfig);
 }
 
-function getLetterSize(size, sizeChart) {
+function getSizeData(size, sizeChart) {
     for (const entry of sizeChart) {
         if (size <= entry.max) {
-            return entry.letter;
+            return entry;
         }
     }
-    return 'XXL';
+    // Return last entry if larger
+    return sizeChart[sizeChart.length - 1];
 }
 
-function showResults(size, letter, min, max, bikeConfig, proficiencyConfig) {
+function showResults(size, letter, min, max, stem, bikeConfig, proficiencyConfig) {
     // Masquer le placeholder, afficher les résultats
     resultsPlaceholder.classList.add('hidden');
     resultsContent.classList.remove('hidden');
@@ -212,6 +218,11 @@ function showResults(size, letter, min, max, bikeConfig, proficiencyConfig) {
     animateValue(frameSizeEl, 0, size, 600);
     sizeLetterEl.textContent = letter;
     sizeRangeEl.textContent = `${min} à ${max} cm`;
+
+    // Afficher la potence
+    if (stemLengthEl) {
+        stemLengthEl.textContent = `${stem} mm`;
+    }
 
     // Construire les conseils
     const allTips = [...bikeConfig.tips, ...proficiencyConfig.tips];

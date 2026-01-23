@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.classList.add('active');
             selectedBikeTypePressure = btn.dataset.type;
             updateTirePresetsForBikeType(selectedBikeTypePressure);
-            recalculateIfResultsVisible();
+
         });
     });
 
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         tireWidthRearInput.value = width;
                     }
                     updateMiniPresetStates();
-                    recalculateIfResultsVisible();
+
                 }
             });
         });
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 tirePresetContainer.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 updateMiniPresetStates();
-                recalculateIfResultsVisible();
+
             }
         });
     }
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const miniPresets = {
-            road: [25, 28, 32],
+            road: [25, 28, 30, 32],
             gravel: [38, 42, 45],
             mtb: [55, 60, 70],
             city: [32, 40, 47]
@@ -430,17 +430,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             tireWidthRearInput.value = width;
                         }
                         updateMiniPresetStates();
-                        recalculateIfResultsVisible();
+
                     }
                 });
             });
         });
     }
 
-    // Recalculate on option changes
-    [...(tireTypeInputs || []), ...(conditionsInputs || [])].forEach(input => {
-        input.addEventListener('change', recalculateIfResultsVisible);
-    });
+
 
     // Calculate button
     if (calculatePressureBtn) {
@@ -456,12 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    function recalculateIfResultsVisible() {
-        const pressureContent = document.getElementById('pressureContent');
-        if (pressureContent && !pressureContent.classList.contains('hidden')) {
-            calculatePressure();
-        }
-    }
+
 
     function calculatePressure() {
         const riderWeight = parseFloat(riderWeightInput?.value) || 0;
@@ -571,7 +563,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         requestAnimationFrame(update);
     }
-
     function shakeButton(btn) {
         if (btn) {
             btn.style.animation = 'none';
@@ -579,4 +570,84 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.style.animation = 'shake 0.5s ease';
         }
     }
+
+    // ============================
+    // History Logic
+    // ============================
+    const HISTORY_KEY = 'tirePressureHistory';
+    const historyTableBody = document.getElementById('historyTableBody');
+    const historyCard = document.getElementById('historyCard');
+
+    function saveToHistory(result, totalWeight, frontWidth, rearWidth, bikeType, tireType) {
+        const entry = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            totalWeight: Math.round(totalWeight),
+            frontWidth,
+            rearWidth,
+            bikeType: PRESSURE_CONFIG[bikeType]?.name || bikeType,
+            tireType: TIRE_TYPE_ADJUSTMENTS[tireType]?.name || tireType,
+            frontPressure: result.front,
+            rearPressure: result.rear
+        };
+
+        const history = getHistory();
+        history.unshift(entry);
+
+        // Keep last 10 entries
+        if (history.length > 10) {
+            history.pop();
+        }
+
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        renderHistory();
+    }
+
+    function getHistory() {
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function renderHistory() {
+        const history = getHistory();
+
+        if (history.length === 0) {
+            if (historyCard) historyCard.classList.add('hidden');
+            return;
+        }
+
+        if (historyCard) historyCard.classList.remove('hidden');
+        if (historyTableBody) {
+            historyTableBody.innerHTML = history.map(item => `
+                <tr>
+                    <td>${item.totalWeight} kg</td>
+                    <td>${item.frontWidth}mm / ${item.rearWidth}mm</td>
+                    <td>${item.bikeType}</td>
+                    <td>
+                        <span class="pressure-highlight">${item.frontPressure}</span> / 
+                        <span class="pressure-highlight">${item.rearPressure}</span> bar
+                    </td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    // Initial render
+    renderHistory();
+
+    // Hook into existing showPressureResults to save history
+    const originalShowPressureResults = showPressureResults;
+    showPressureResults = function (result, totalWeight) {
+        originalShowPressureResults(result, totalWeight);
+
+        // Capture current inputs for history
+        const frontWidth = parseFloat(tireWidthFrontInput?.value) || 28;
+        const rearWidth = parseFloat(tireWidthRearInput?.value) || 28;
+        const tireType = document.querySelector('input[name="tireType"]:checked')?.value || 'clincher';
+
+        saveToHistory(result, totalWeight, frontWidth, rearWidth, selectedBikeTypePressure, tireType);
+    };
 });

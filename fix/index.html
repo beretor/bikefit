@@ -263,6 +263,11 @@
                             <span class="range-value" id="sizeRange">-- à -- cm</span>
                         </div>
 
+                        <div class="size-range">
+                            <span class="range-label">Potence suggérée :</span>
+                            <span class="range-value" id="stemLength">-- mm</span>
+                        </div>
+
                         <div class="fit-tips" id="fitTips">
                         </div>
                     </div>
@@ -429,6 +434,7 @@
                             <div class="mini-presets" data-target="tireWidthFront">
                                 <button class="mini-preset-btn" data-width="25">25</button>
                                 <button class="mini-preset-btn active" data-width="28">28</button>
+                                <button class="mini-preset-btn" data-width="30">30</button>
                                 <button class="mini-preset-btn" data-width="32">32</button>
                             </div>
                         </div>
@@ -441,6 +447,7 @@
                             <div class="mini-presets" data-target="tireWidthRear">
                                 <button class="mini-preset-btn" data-width="25">25</button>
                                 <button class="mini-preset-btn active" data-width="28">28</button>
+                                <button class="mini-preset-btn" data-width="30">30</button>
                                 <button class="mini-preset-btn" data-width="32">32</button>
                             </div>
                         </div>
@@ -584,6 +591,27 @@
                     <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
             </button>
+
+            <section class="card history-card hidden" id="historyCard">
+                <h2 class="card-title">
+                    Dernières Configurations
+                </h2>
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Poids</th>
+                                <th>Pneus (Av/Ar)</th>
+                                <th>Type</th>
+                                <th>Pression (Av/Ar)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History items will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
             <footer class="footer">
                 <p>💡 <strong>Conseil :</strong> Vérifiez régulièrement la pression avant chaque sortie. La température
