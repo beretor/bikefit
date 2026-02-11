@@ -52,6 +52,15 @@
                 </svg>
                 Pression Pneus
             </button>
+            <button class="tab-btn" data-tab="training-plan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Plan Entrainement
+            </button>
         </nav>
 
         <!-- Frame Size Calculator Tab -->
@@ -617,11 +626,43 @@
                 <p>💡 <strong>Conseil :</strong> Vérifiez régulièrement la pression avant chaque sortie. La température
                     affecte la pression (environ 0.1 bar tous les 10°C).</p>
             </footer>
-        </div>
+            <!-- Training Plan Tab -->
+            <div class="tab-content" id="training-plan">
+                <section class="card training-card">
+                    <h2 class="card-title">
+                        Plan d'Entrainement - Tour des Flandres (5 Avril)
+                    </h2>
+
+                    <div class="training-controls">
+                        <div class="toggle-group" id="trainingToggles">
+                            <button class="toggle-btn active" data-filter="all">Tout</button>
+                            <button class="toggle-btn" data-filter="key">Clés</button>
+                            <button class="toggle-btn" data-filter="recovery">Récup</button>
+                        </div>
+                    </div>
+
+                    <div class="training-table-wrapper">
+                        <table class="training-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Séance</th>
+                                    <th>MyWhoosh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trainingTableBody">
+                                <!-- Training items will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
     </main>
 
     <script src="app.js"></script>
     <script src="pressure.js"></script>
+    <script src="training.js"></script>
 </body>
 
 </html>
